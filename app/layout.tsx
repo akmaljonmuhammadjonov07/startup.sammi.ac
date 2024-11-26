@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import './globals.css';
+import './[lng]/globals.css';
 import { ChildProps } from '@/types';
 import { ThemeProvider } from '@/components/providers/theme.provider';
+import { languages } from '@/i18n/settings';
+import { dir } from 'i18next';
 
 const Roboto = localFont({
 	src: './fonts/Roboto-Regular.ttf',
@@ -16,15 +18,23 @@ const SpaceGrotesk = localFont({
 	weight: '100 900',
 });
 
+export async function generateStaticParams() {
+	return languages.map(lng => ({ lng }));
+}
+
 export const metadata: Metadata = {
 	title: 'Startup Praktikum - Next.js',
 	description: "Startup Praktikum's - Next.js project",
 	icons: { icon: '/AK_DEV.png' },
 };
 
-function RootLayout({ children }: ChildProps) {
+interface Props extends ChildProps {
+	params: { lng: string };
+}
+
+function RootLayout({ children, params: { lng } }: Props) {
 	return (
-		<html lang='en' suppressHydrationWarning>
+		<html lang={lng} dir={`${dir(lng)},"rtl"`} suppressHydrationWarning>
 			<body
 				suppressHydrationWarning
 				className={`${Roboto.variable} ${SpaceGrotesk.variable} overflow-x-hidden antialiased`}
